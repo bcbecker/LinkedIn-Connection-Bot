@@ -1,32 +1,38 @@
-#WARNING: don't use on your personal account unless you accept the risks
-#time.slee(20 is for precaution, page loading times)
-
 from selenium import webdriver
 import time
+from config import Config
 
-#need to download web driver and give it path
-driver = webdriver.Chrome('<path_to_exe>')
+TARGET_CONNECTION_URL = 'https://www.linkedin.com/search/results/people/?network=%5B%22S%22%5D&origin=FACETED_SEARCH&sid=3%3Bb'
+
+#You need to download web driver and give it path
+driver = webdriver.Chrome(Config.PATH_TO_SELENIUM)
 driver.get('https://www.linkedin.com')
 time.sleep(2)
 
+
+#LOGIN
 username = driver.find_element_by_xpath("//input[@name='session_key']")
 password = driver.find_element_by_xpath("//input[@name='session_password']")
 
-username.send_keys(<username>)
-password.send_keys(<my_password>)
+username.send_keys(Config.LINKEDIN_USERNAME)
+password.send_keys(Config.LINKEDIN_PASSWORD)
 time.sleep(2)
 
 submit = driver.find_element_by_xpath("//button[@type='submit']").click()
 
-driver.get(<url_to_redirect_to>)
+
+#FIND BUTTONS ON URL
+driver.get(TARGET_CONNECTION_URL)
 time.sleep(2)
 
 all_buttons = driver.find_elements_by_tag_name("button")
-connect_buttons = [btn for btn in all_buttons if btn.text == "Connect"]
+connect_buttons = [button for button in all_buttons if button.text == "Connect"]
 
-for bnt in connect_buttons:
+
+#ITERATE AND SEND INVITE
+for button in connect_buttons:
 	#click connect
-	driver.execute_script("arguments[0].click();", btn)
+	driver.execute_script("arguments[0].click();", button)
 	time.sleep(2)
 
 	#click send invite
